@@ -17,6 +17,9 @@ type Query {
       "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
       name: String @where(operator: "like")
     ): [User!]! @paginate(defaultCount: 10)
+
+    jobs: [Job!]! @all
+    locations: [Location!]! @all
 }
 
 "Account of a person who utilizes this application."
@@ -38,4 +41,71 @@ type User {
 
     "When the account was last updated."
     updated_at: DateTime!
+}
+
+"An Job WCI has been hired to complete."
+type Job {
+    "Unique primary key."
+    id: ID!
+
+    "The name of the job."
+    name: String!
+
+    "The date the job was created."
+    created_at: DateTime!
+
+    "The date the job was last updated."
+    updated_at: DateTime!
+
+    "The project manager for this job."
+    project_manager: User!
+
+    "The Locaitons associated with this job"
+    locations: [Location!]! @all
+
+    daily_reports: [DailyReport!]! @all
+}
+
+"One of the locations WCI has been hired to complete a job."
+type Location {
+    "Unique primary key."
+    id: ID!
+
+    "The name of the location."
+    name: String!
+
+    "The date the location was created."
+    created_at: DateTime!
+
+    "The date the location was last updated."
+    updated_at: DateTime!
+
+    "The job this location is associated with."
+    job: Job!
+    
+    daily_reports: [DailyReport!]! @all
+}
+
+type DailyReport {
+    "Unique primary key."
+    id: ID!
+
+    name: String!
+
+    "The Report's date."
+    date: DateTime!
+
+    "The date the report was created."
+    created_at: DateTime!
+
+    "The date the report was last updated."
+    updated_at: DateTime!
+
+    "The job this report is associated with."
+    job: Job!
+
+    "The user who created this report."
+    foreman: User!
+
+    sort_order: Int!
 }
