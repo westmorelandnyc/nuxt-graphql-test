@@ -18,6 +18,8 @@ type Query {
       name: String @where(operator: "like")
     ): [User!]! @paginate(defaultCount: 10)
 
+    job(id: ID @eq): Job @find
+
     jobs: [Job!]! @all
     locations: [Location!]! @all
 }
