@@ -12,6 +12,7 @@
     "@nuxt/devtools": "latest",
     "@nuxtjs/apollo": "^5.0.0-alpha.6",
     "@types/node": "^18",
+    "nuxi": "^3.6.1",
     "nuxt": "^3.6.1"
   }
 }
