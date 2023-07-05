@@ -16,8 +16,13 @@ class JobFactory extends Factory
      */
     public function definition(): array
     {
+        $randomWord = $this->faker->word;
+        $companySuffix = $this->faker->companySuffix;
+        
+        $companyName = ucfirst($randomWord) . ' ' . ucfirst($companySuffix);
+
         return [
-            'name' => $this->faker->companySuffix() . "  " . $this->faker->address(),
+            'name' => $companyName,
             'project_manager' => User::factory(),
         ];
     }
