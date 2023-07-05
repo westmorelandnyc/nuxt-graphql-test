@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('cost_code_number')->nullable();
             $table->string('description')->nullable();
             $table->string('unit_of_measure')->nullable();
-            $table->string('internal_id')->nullable();
+            $table->string('internal_id')->unique()->nullable();
             $table->timestamps();
         });        
     }
