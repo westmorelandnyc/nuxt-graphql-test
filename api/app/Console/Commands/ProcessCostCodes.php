@@ -42,21 +42,24 @@ class ProcessCostCodes extends Command
     }
 
     private function generateInternalId($costCode) {
-        $internalIdFormat = 'W%d%s';
+        $internalIdFormat = '%s%s';
         $truncatedCostCodeNumber = 
             substr(
-                Str::replaceFirst('.', '',
-                    str_pad($costCode->cost_code_number, 9, '0', STR_PAD_RIGHT)
-                )
-            , 0, 8); 
+                str_pad(
+                    Str::replaceFirst('.', '',
+                        trim(str_replace(' ', '', $costCode->cost_code_number))
+                    ),
+                9, '0', STR_PAD_RIGHT)
+            , 0, 9); 
+            // $this->info("{$costCode->cost_code_number} => {$truncatedCostCodeNumber} (length : " . strlen($truncatedCostCodeNumber) . ")");
         $internalIdCollisions = CostCode::where('internal_id', 'like', sprintf($internalIdFormat, $truncatedCostCodeNumber, '%'))->get();
         $newInternalId = '';
         if($internalIdCollisions->count() === 0) {
-            $newInternalId= sprintf($internalIdFormat, $truncatedCostCodeNumber, 'A');
+            $newInternalId = sprintf($internalIdFormat, $truncatedCostCodeNumber, 'A');
         } else {
             $maxInternalId = $internalIdCollisions->sortByDesc('internal_id')->first()->internal_id;
             $nextInternalIdSuffix = $this->getInternalIdSuffix($maxInternalId);
-            $newInternalId= sprintf($internalIdFormat, $truncatedCostCodeNumber, $nextInternalIdSuffix);
+            $newInternalId = sprintf($internalIdFormat, $truncatedCostCodeNumber, $nextInternalIdSuffix);
         }
         return $newInternalId;
     }
@@ -64,9 +67,7 @@ class ProcessCostCodes extends Command
     private function getInternalIdSuffix($internalId) {
         $lastInternalIdSuffix = substr($internalId, 9);
         $nextInternalIdSuffix = ++$lastInternalIdSuffix;
-        if( $nextInternalIdSuffix > 9 ) {
-            $nextInternalIdSuffix = 'A';
-        } elseif( $nextInternalIdSuffix > 'Z' ) {
+        if( $nextInternalIdSuffix > 'Z' ) {
             $nextInternalIdSuffix = 'a';
         } elseif( $nextInternalIdSuffix > 'z' ) {
             throw new Exception("Too many collisions", 1);
@@ -75,6 +76,9 @@ class ProcessCostCodes extends Command
     }
 
     private function query() {
-        return CostCode::query()->whereNull('internal_id')->get();
+        return CostCode::query()
+        ->whereNull('internal_id')
+        // ->where(DB::raw('LENGTH(internal_id)'), '<>', 10)
+        ->get();
     }
 }
