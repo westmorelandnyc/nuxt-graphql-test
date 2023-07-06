@@ -24,6 +24,10 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->string('unit_of_measure')->nullable();
             $table->string('internal_id')->unique()->nullable();
+            $table->string('special_spec')->nullable();
+            $table->boolean('has_special_spec')->default(false);
+            $table->string('spec_filename')->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
         });        
     }

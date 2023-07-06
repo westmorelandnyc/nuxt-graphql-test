@@ -32,9 +32,10 @@ class ProcessCostCodes extends Command
         $query = $this->query();
         $count=  $query->count();
         $bar = $this->output->createProgressBar($count);
-        $query->each(function ($costCode, $index) use ($count, $bar) {
+        $query->each(function ($costCode) use ($bar) {
             $costCode->update([
                 'internal_id' => $this->generateInternalId($costCode),
+                'has_special_spec' => $costCode->special_spec === 'Y' ? true : false,
             ]);
             $bar->advance();
         });
@@ -79,6 +80,7 @@ class ProcessCostCodes extends Command
         return CostCode::query()
         ->whereNull('internal_id')
         // ->where(DB::raw('LENGTH(internal_id)'), '<>', 10)
+        // ->limit(100)
         ->get();
     }
 }
